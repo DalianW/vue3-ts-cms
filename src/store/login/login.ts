@@ -4,6 +4,7 @@ import {
   requestUserInfoById,
   requestUserMenusByRoleId
 } from '@/service/login/login'
+import { mapMenusToRoutes, mapMenusToPermissions } from '@/utils/map-menu'
 import router from '@/router'
 import localCache from '@/utils/cache'
 import { ILoginState } from './types'
@@ -15,7 +16,8 @@ const loginModule: Module<ILoginState, IRootState> = {
     return {
       token: '',
       userInfo: {},
-      userMenus: []
+      userMenus: [],
+      permissions: []
     }
   },
   getters: {},
@@ -28,15 +30,27 @@ const loginModule: Module<ILoginState, IRootState> = {
     },
     changeUserMenus(state, userMenus: any) {
       state.userMenus = userMenus
+
+      const routes = mapMenusToRoutes(userMenus)
+      routes.forEach((route) => {
+        router.addRoute('main', route)
+      })
+
+      // 获取用户按钮权限
+      const permissions = mapMenusToPermissions(userMenus)
+      state.permissions = permissions
     }
   },
   actions: {
-    async accountLoginAction({ commit }, payload: any) {
+    async accountLoginAction({ commit, dispatch }, payload: any) {
       // 1.实现登录
       const loginResult = await accountLoginRequest(payload)
       const { id, token } = loginResult.data
       commit('changeToken', token)
       localCache.setCache('token', token)
+
+      // 发送初始化请求（完整的role/department）
+      dispatch('getInitialDataAction', null, { root: true })
 
       // 2.请求用户信息
       const userInfoResult = await requestUserInfoById(id)
@@ -53,8 +67,11 @@ const loginModule: Module<ILoginState, IRootState> = {
       // 跳转
       router.push('/main')
     },
-    loadLocalLogin({ commit }) {
+    loadLocalLogin({ commit, dispatch }) {
       const token = localCache.getCache('token')
+      if (token) {
+        dispatch('getInitialDataAction', null, { root: true })
+      }
       token && commit('changeToken', token)
       const userInfo = localCache.getCache('userInfo')
       userInfo && commit('changeUserInfo', userInfo)

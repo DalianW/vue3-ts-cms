@@ -12,10 +12,10 @@ const app = createApp(App)
 
 // globalRegister(app)
 app.use(globalRegister)
-app.use(router)
 app.use(store)
 // app.use(ElementPlus)
 setupStore()
+app.use(router)
 
 app.mount('#app')
 
@@ -35,11 +35,11 @@ app.mount('#app')
 //     }
 //   }
 // })
-interface DataType {
-  data: any
-  code: string
-  message: string
-}
+// interface DataType {
+//   data: any
+//   code: string
+//   message: string
+// }
 // hyRequest
 //   .post<DataType>({
 //     url: '/version/get_home_banner_list',

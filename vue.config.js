@@ -9,7 +9,8 @@ module.exports = {
         },
         changeOrigin: true
       }
-    }
+    },
+    port: 8083
   },
   // 配置方式一
   // configureWebpack: {

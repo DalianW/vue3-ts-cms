@@ -53,7 +53,7 @@ class HYRequest {
       }
     )
   }
-  request<T>(config: HYRequestConfig<any>): Promise<T> {
+  request<T = any>(config: HYRequestConfig<any>): Promise<T> {
     return new Promise((resolve, reject) => {
       if (config.interceptors?.requestInterceptor) {
         config = config.interceptors.requestInterceptor(config)
@@ -76,16 +76,16 @@ class HYRequest {
         })
     })
   }
-  get<T>(config: HYRequestConfig): Promise<T> {
+  get<T = any>(config: HYRequestConfig): Promise<T> {
     return this.request<T>({ ...config, method: 'GET' })
   }
-  post<T>(config: HYRequestConfig): Promise<T> {
+  post<T = any>(config: HYRequestConfig): Promise<T> {
     return this.request<T>({ ...config, method: 'POST' })
   }
-  delete<T>(config: HYRequestConfig): Promise<T> {
+  delete<T = any>(config: HYRequestConfig): Promise<T> {
     return this.request<T>({ ...config, method: 'DELETE' })
   }
-  patch<T>(config: HYRequestConfig): Promise<T> {
+  patch<T = any>(config: HYRequestConfig): Promise<T> {
     return this.request<T>({ ...config, method: 'PATCH' })
   }
 }
